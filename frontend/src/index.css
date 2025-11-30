@@ -1,0 +1,54 @@
+/* KaTeX CSS for math rendering */
+@import url('https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* Style math blocks */
+.katex-display {
+  margin: 1em 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.katex {
+  font-size: 1.1em;
+}
+
+/* Rendered content styling */
+.rendered-content {
+  line-height: 1.6;
+}
+
+.rendered-content strong {
+  font-weight: 600;
+}
+
+.rendered-content em {
+  font-style: italic;
+}
+
+.rendered-content code {
+  font-family: 'Courier New', monospace;
+}
+
+.rendered-content .inline-math {
+  display: inline-block;
+  margin: 0 2px;
+}
+

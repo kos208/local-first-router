@@ -1,0 +1,37 @@
+# Quick Start Guide
+
+## Installation (All-in-One)
+
+Just run the installer - it will install everything automatically:
+
+  ./install.sh
+
+This will:
+  ✅ Install Python (if needed)
+  ✅ Install Node.js (if needed)
+  ✅ Install Ollama (if needed)
+  ✅ Download the llama3.2:latest model (if needed)
+  ✅ Install all application dependencies
+  ✅ Build the frontend
+
+## Start the Router
+
+  ./start.sh
+
+Then open: http://localhost:5173
+
+## Stop the Router
+
+  ./stop.sh
+
+## Manual Start (Alternative)
+
+  make start
+
+## Troubleshooting
+
+- If Ollama isn't running: ollama serve &
+- To check models: ollama list
+- To pull model: ollama pull llama3.2:latest
+
+For more help, see README.md

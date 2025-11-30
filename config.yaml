@@ -1,0 +1,43 @@
+# Local-first Router Configuration
+# You can override these settings with environment variables
+
+# Local Model Configuration
+local:
+  base_url: "http://localhost:11434"
+  model: "llama3.2:latest"
+  models:
+    - "llama3.2:latest"
+    - "llama3.1:8b-instruct-q4_K_M"
+  temperature: 0.7
+  max_tokens: null
+  
+# Cloud Model Configuration
+cloud:
+  base_url: "https://api.anthropic.com"
+  model: "claude-3-haiku-20240307"
+  max_tokens: 1024
+  # API key should be set via ANTHROPIC_API_KEY env var
+  
+# Routing Logic
+routing:
+  confidence_threshold: 0.7
+  # If local model confidence is below this, route to cloud
+  
+# Cost Estimation (USD per 1K tokens)
+costs:
+  input_per_1k: 0.005
+  output_per_1k: 0.015
+  
+# Cache & Database
+cache:
+  ttl_seconds: 300
+  
+database:
+  url: "sqlite:///./router.db"
+  max_log_rows: 5000
+  
+# Policy
+policy:
+  block_tag: "#no_cloud"
+  # Use this tag in messages to force local-only routing
+
