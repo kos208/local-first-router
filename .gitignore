@@ -64,6 +64,7 @@ frontend.log
 local-first-router-v*.zip
 local-first-router-v*.tar.gz
 local-first-router-v*.sha256
+local-first-router-v*/
 
 # Process IDs
 .backend.pid

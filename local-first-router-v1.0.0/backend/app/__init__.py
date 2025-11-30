@@ -1,2 +1,0 @@
-# Local-first LLM Router
-
