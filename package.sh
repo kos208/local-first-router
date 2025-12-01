@@ -35,8 +35,12 @@ mkdir -p "${PACKAGE_NAME}"
 # Step 3: Copy essential files
 echo -e "${BLUE}Step 3: Copying files...${NC}"
 
-# Root files
-cp README.md "${PACKAGE_NAME}/"
+# Root files - use end-user README if available
+if [ -f END_USER_README.md ]; then
+    cp END_USER_README.md "${PACKAGE_NAME}/README.md"
+else
+    cp README.md "${PACKAGE_NAME}/"
+fi
 cp LICENSE "${PACKAGE_NAME}/" 2>/dev/null || true
 cp Makefile "${PACKAGE_NAME}/"
 cp install-full.sh "${PACKAGE_NAME}/install.sh"

@@ -5,6 +5,7 @@ from typing import List, Optional, Literal, Any
 class Message(BaseModel):
     role: Literal["system", "user", "assistant", "tool"] = "user"
     content: str
+    image: Optional[str] = None  # Base64-encoded image or image URL
 
 
 class ChatRequest(BaseModel):
@@ -13,6 +14,7 @@ class ChatRequest(BaseModel):
     temperature: Optional[float] = 0.2
     stream: Optional[bool] = False
     conversation_id: Optional[str] = None
+    image: Optional[str] = None  # Base64-encoded image for the last message
 
 
 class ChoiceMsg(BaseModel):

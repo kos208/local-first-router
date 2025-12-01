@@ -4,8 +4,8 @@ from typing import Optional, List
 
 class Settings(BaseSettings):
     OLLAMA_BASE: str = "http://localhost:11434"
-    LOCAL_MODELS: List[str] = ["llama3.2:latest", "llama3.1:8b-instruct-q4_K_M"]
-    LOCAL_MODEL: str = "llama3.2:latest"
+    LOCAL_MODELS: List[str] = ["llama3.1:8b-instruct-q4_K_M", "llama3.2:latest"]
+    LOCAL_MODEL: str = "llama3.1:8b-instruct-q4_K_M"
     LOCAL_TEMPERATURE: float = 0.7
     LOCAL_MAX_TOKENS: Optional[int] = None
     ANTHROPIC_BASE: str = "https://api.anthropic.com"
@@ -19,6 +19,10 @@ class Settings(BaseSettings):
     MAX_LOG_ROWS: int = 5000
     PRICE_PER_1K_INPUT: float = 0.005   # default estimate for cloud model
     PRICE_PER_1K_OUTPUT: float = 0.015
+    
+    # Web Search
+    ENABLE_WEB_SEARCH: bool = True
+    WEB_SEARCH_MAX_RESULTS: int = 5
 
     class Config:
         env_file = ".env"

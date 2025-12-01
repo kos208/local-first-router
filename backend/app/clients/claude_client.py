@@ -38,7 +38,7 @@ def _convert_messages(messages: List[dict]) -> Tuple[Optional[str], List[dict]]:
     return system_prompt, converted
 
 
-def chat(messages, model=None, temperature=0.2, max_tokens: Optional[int] = None):
+def chat(messages, model=None, temperature=0.2, max_tokens: Optional[int] = None, tools=None):
     """Call Anthropic Claude messages endpoint and return OpenAI-compatible shape."""
     if not settings.ANTHROPIC_API_KEY:
         raise RuntimeError("Anthropic API key is not configured.")
@@ -54,6 +54,10 @@ def chat(messages, model=None, temperature=0.2, max_tokens: Optional[int] = None
 
     if system_prompt:
         payload["system"] = system_prompt
+    
+    # Add tools if provided
+    if tools:
+        payload["tools"] = tools
 
     try:
         response = _post_messages(payload)

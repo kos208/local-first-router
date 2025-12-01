@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 from .schemas import ChatRequest, ChatResponse, Choice, ChoiceMsg
@@ -9,9 +9,11 @@ from .cache import key_for_messages, cache_get, cache_set
 from .db import Base, engine, SessionLocal
 from .models import LogEntry
 from .cost import estimate_cost
+from .services.ocr import extract_text_from_image, extract_text_from_base64, format_ocr_text_for_prompt
 import json
 import uuid
 import time
+import base64
 
 app = FastAPI(title="Local-first AI Router")
 
@@ -29,8 +31,40 @@ Base.metadata.create_all(bind=engine)
 
 @app.post("/v1/chat/completions", response_model=ChatResponse)
 def chat(req: ChatRequest):
-    """OpenAI-compatible chat endpoint with local-first routing."""
+    """OpenAI-compatible chat endpoint with local-first routing and OCR support."""
     messages = [m.dict() for m in req.messages]
+    
+    # Process OCR if image is provided
+    if req.image:
+        print("Processing image with OCR...")
+        ocr_text, success = extract_text_from_base64(req.image)
+        if success and ocr_text:
+            print(f"OCR extracted {len(ocr_text)} characters from image")
+            # Get the last user message
+            if messages and messages[-1].get("role") == "user":
+                original_content = messages[-1].get("content", "")
+                # Prepend OCR text to the message
+                ocr_formatted = format_ocr_text_for_prompt(ocr_text, original_content)
+                messages[-1]["content"] = f"{ocr_formatted}\n\n{original_content}" if original_content else ocr_formatted
+            else:
+                # Create a new user message with OCR text
+                messages.append({
+                    "role": "user",
+                    "content": format_ocr_text_for_prompt(ocr_text, "")
+                })
+        else:
+            print("OCR extraction failed or returned no text")
+    
+    # Also check for images in message.image fields
+    for msg in messages:
+        if msg.get("image"):
+            print("Processing image from message.image field...")
+            ocr_text, success = extract_text_from_base64(msg["image"])
+            if success and ocr_text:
+                print(f"OCR extracted {len(ocr_text)} characters from message image")
+                original_content = msg.get("content", "")
+                ocr_formatted = format_ocr_text_for_prompt(ocr_text, original_content)
+                msg["content"] = f"{ocr_formatted}\n\n{original_content}" if original_content else ocr_formatted
 
     requested_model = (req.model or "").strip()
     available_local_models = settings.LOCAL_MODELS or [settings.LOCAL_MODEL]

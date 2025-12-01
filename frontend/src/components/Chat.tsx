@@ -17,6 +17,7 @@ interface Message {
   estimated_cost_saved_usd?: number;
   model?: string;
   localModel?: string | null;
+  image?: string; // Base64-encoded image
 }
 
 interface ChatSession {
@@ -59,8 +60,11 @@ export default function Chat({ availableModels, cloudModel, selectedModel, onMod
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [attachedImage, setAttachedImage] = useState<string | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const modelOptions = useMemo(() => {
     const locals = availableModels ?? [];
@@ -248,6 +252,9 @@ export default function Chat({ availableModels, cloudModel, selectedModel, onMod
     const newUserMessage: Message = { role: "user", content: userMessage };
     newUserMessage.model = isCloudSelected ? modelToSend : effectiveModelSelection;
     newUserMessage.localModel = isCloudSelected ? null : effectiveModelSelection;
+    if (attachedImage) {
+      newUserMessage.image = attachedImage;
+    }
 
     updateSessionById(sessionId, (current) => {
       const newMessages = [...current.messages, newUserMessage];
@@ -279,14 +286,21 @@ export default function Chat({ availableModels, cloudModel, selectedModel, onMod
       const controller = new AbortController();
       const fetchTimeoutId = setTimeout(() => controller.abort(), 60000);
 
+      const requestBody: any = {
+        messages: conversationHistory,
+        model: modelToSend,
+        conversation_id: sessionId,
+      };
+      
+      // Add image if attached
+      if (attachedImage) {
+        requestBody.image = attachedImage;
+      }
+
       const r = await fetch("/v1/chat/completions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          messages: conversationHistory,
-          model: modelToSend,
-          conversation_id: sessionId,
-        }),
+        body: JSON.stringify(requestBody),
         signal: controller.signal,
       });
 
@@ -319,6 +333,10 @@ export default function Chat({ availableModels, cloudModel, selectedModel, onMod
         messages: [...current.messages, assistantMessage],
         selectedModel: isCloudSelected ? "cloud" : effectiveModelSelection,
       }));
+      
+      // Clear attached image after sending
+      setAttachedImage(null);
+      setImagePreview(null);
     } catch (error: any) {
       clearTimeout(timeoutId);
       if (error.name === "AbortError") {
@@ -334,6 +352,43 @@ export default function Chat({ availableModels, cloudModel, selectedModel, onMod
     }
   };
 
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Check if it's an image
+    if (!file.type.startsWith('image/')) {
+      setError("Please select an image file");
+      return;
+    }
+
+    // Check file size (max 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      setError("Image size must be less than 10MB");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64String = reader.result as string;
+      setAttachedImage(base64String);
+      setImagePreview(base64String);
+      setError(null);
+    };
+    reader.onerror = () => {
+      setError("Failed to read image file");
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const removeImage = () => {
+    setAttachedImage(null);
+    setImagePreview(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
   const clearChat = () => {
     if (!activeSession) return;
     updateSessionById(activeSession.id, (current) => ({
@@ -342,6 +397,8 @@ export default function Chat({ availableModels, cloudModel, selectedModel, onMod
       title: current.title,
     }));
     setError(null);
+    setAttachedImage(null);
+    setImagePreview(null);
   };
 
   const copyToClipboard = (text: string) => {
@@ -593,7 +650,39 @@ export default function Chat({ availableModels, cloudModel, selectedModel, onMod
 
         {/* Input Area */}
         <div className="p-4 border-t border-gray-200 bg-white">
+          {/* Image Preview */}
+          {imagePreview && (
+            <div className="mb-2 relative inline-block">
+              <img
+                src={imagePreview}
+                alt="Preview"
+                className="max-w-xs max-h-32 rounded-lg border border-gray-300"
+              />
+              <button
+                onClick={removeImage}
+                className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 text-xs"
+                title="Remove image"
+              >
+                ×
+              </button>
+            </div>
+          )}
           <div className="flex gap-2">
+            <input
+              type="file"
+              ref={fileInputRef}
+              accept="image/*"
+              onChange={handleImageUpload}
+              className="hidden"
+              id="image-upload"
+            />
+            <label
+              htmlFor="image-upload"
+              className="px-3 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 cursor-pointer flex items-center justify-center h-fit self-end"
+              title="Attach image (OCR will extract text)"
+            >
+              📷
+            </label>
             <textarea
               ref={textareaRef}
               className="flex-1 border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
@@ -607,7 +696,7 @@ export default function Chat({ availableModels, cloudModel, selectedModel, onMod
             <button
               className="px-6 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors font-medium h-fit self-end"
               onClick={send}
-              disabled={loading || !input.trim()}
+              disabled={loading || (!input.trim() && !attachedImage)}
             >
               {loading ? (
                 <span className="flex items-center gap-2">
@@ -621,7 +710,10 @@ export default function Chat({ availableModels, cloudModel, selectedModel, onMod
           </div>
           <div className="mt-2 text-xs text-gray-500 flex items-center justify-between">
             <span>{messages.length > 0 && `${messages.length} messages in conversation`}</span>
-            <span>{input.length > 0 && `${input.length} characters`}</span>
+            <span>
+              {input.length > 0 && `${input.length} characters`}
+              {attachedImage && " • Image attached (OCR enabled)"}
+            </span>
           </div>
         </div>
       </div>
