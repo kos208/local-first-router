@@ -54,12 +54,34 @@ Then open your browser to: **http://localhost:5173**
 
 ## ⚙️ Configuration
 
-Edit `.env` to customize:
+### Adding Your API Key (Optional)
 
+The router works without an API key (local-only mode), but adding one enables cloud fallback for better answers.
+
+**To add your API key:**
+
+1. Get an API key from: https://console.anthropic.com/
+2. Edit the `.env` file:
+   ```bash
+   nano .env
+   # or on macOS: open .env
+   ```
+3. Find this line and replace `your-key-here`:
+   ```bash
+   ANTHROPIC_API_KEY=your-key-here
+   ```
+   With your actual key:
+   ```bash
+   ANTHROPIC_API_KEY=sk-ant-api03-...
+   ```
+4. Save and restart:
+   ```bash
+   ./stop.sh
+   ./start.sh
+   ```
+
+**Other settings** (edit `.env`):
 ```bash
-# Cloud API (optional - for fallback)
-ANTHROPIC_API_KEY=sk-ant-...
-
 # Local Model
 LOCAL_MODEL=llama3.1:8b-instruct-q4_K_M
 

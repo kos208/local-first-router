@@ -73,10 +73,11 @@ cp docker-compose.full.yml "${PACKAGE_NAME}/" 2>/dev/null || true
 cat > "${PACKAGE_NAME}/.env.example" << 'EOF'
 # Local model
 OLLAMA_BASE=http://localhost:11434
-LOCAL_MODEL=llama3.2:latest
+LOCAL_MODEL=llama3.1:8b-instruct-q4_K_M
 LOCAL_TEMPERATURE=0.7
 
 # Cloud model (optional - for fallback)
+# Get your API key from: https://console.anthropic.com/
 ANTHROPIC_BASE=https://api.anthropic.com
 ANTHROPIC_API_KEY=your-key-here
 CLOUD_MODEL=claude-3-haiku-20240307
@@ -84,6 +85,10 @@ CLOUD_MAX_TOKENS=1024
 
 # Routing
 CONFIDENCE_THRESHOLD=0.7
+
+# Web Search (enabled by default)
+ENABLE_WEB_SEARCH=true
+WEB_SEARCH_MAX_RESULTS=5
 EOF
 
 # Create QUICK_START.txt if it doesn't exist

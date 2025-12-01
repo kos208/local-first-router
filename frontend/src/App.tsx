@@ -244,6 +244,24 @@ export default function App() {
               </ul>
             </div>
 
+            {!cloudModel && (
+              <div className="border-t pt-4">
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                  <h3 className="font-semibold text-yellow-800 mb-2 flex items-center gap-2">
+                    <span>⚠️</span> Cloud Fallback Disabled
+                  </h3>
+                  <p className="text-xs text-yellow-700 mb-2">
+                    No API key configured. Add your Anthropic API key to enable cloud fallback for better answers.
+                  </p>
+                  <p className="text-xs text-yellow-600">
+                    Edit <code className="bg-yellow-100 px-1 rounded">.env</code> and add:
+                    <br />
+                    <code className="text-xs">ANTHROPIC_API_KEY=sk-ant-...</code>
+                  </p>
+                </div>
+              </div>
+            )}
+
             <div className="border-t pt-4">
               <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
                 <span>🔒</span> Privacy Features

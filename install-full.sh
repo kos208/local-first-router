@@ -233,6 +233,10 @@ CONFIDENCE_THRESHOLD=0.7
 EOF
     fi
     print_warning "Created .env file. You can add your ANTHROPIC_API_KEY later if you want cloud fallback."
+    print_info "To add your API key:"
+    print_info "  1. Get a key from: https://console.anthropic.com/"
+    print_info "  2. Edit .env and replace 'your-key-here' with your actual key"
+    print_info "  3. Restart the router: ./stop.sh && ./start.sh"
 fi
 
 # Backend dependencies

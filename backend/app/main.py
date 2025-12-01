@@ -113,7 +113,11 @@ def chat(req: ChatRequest):
         if not settings.ANTHROPIC_API_KEY:
             raise HTTPException(
                 status_code=503,
-                detail="Cloud model requested but Anthropic API key is not configured."
+                detail=(
+                    "Cloud model requested but Anthropic API key is not configured. "
+                    "Add your API key to the .env file: ANTHROPIC_API_KEY=sk-ant-... "
+                    "Get your key from: https://console.anthropic.com/"
+                )
             )
         try:
             answer, latency_ms, usage = call_cloud(messages, effective_temp)
@@ -263,10 +267,12 @@ def root():
 @app.get("/api/config")
 def config():
     """Expose router configuration for frontend."""
+    # Only expose cloud model if API key is configured
+    cloud_model = settings.CLOUD_MODEL if settings.ANTHROPIC_API_KEY else ""
     return {
         "local_models": settings.LOCAL_MODELS,
         "default_local_model": settings.LOCAL_MODEL,
-        "cloud_model": settings.CLOUD_MODEL,
+        "cloud_model": cloud_model,
         "confidence_threshold": settings.CONFIDENCE_THRESHOLD,
     }
 
