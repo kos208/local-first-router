@@ -6,14 +6,19 @@
 
 ### One-Command Installation
 
+**macOS/Linux:**
 ```bash
 curl -fsSL https://raw.githubusercontent.com/YOUR_USERNAME/local-first-router/main/install.sh | bash
 ```
 
 Or download and run:
-
 ```bash
 ./install.sh
+```
+
+**Windows:**
+```powershell
+.\install.ps1
 ```
 
 This automatically installs:
@@ -25,16 +30,28 @@ This automatically installs:
 
 ### Start the Router
 
+**macOS/Linux:**
 ```bash
 ./start.sh
+```
+
+**Windows:**
+```powershell
+.\start.ps1
 ```
 
 Then open your browser to: **http://localhost:5173**
 
 ### Stop the Router
 
+**macOS/Linux:**
 ```bash
 ./stop.sh
+```
+
+**Windows:**
+```powershell
+.\stop.ps1
 ```
 
 ## ✨ Features
@@ -48,9 +65,11 @@ Then open your browser to: **http://localhost:5173**
 
 ## 📋 Requirements
 
-- macOS or Linux
+- **macOS, Linux, or Windows**: Full support with one-command installer
 - 8GB+ RAM (for Ollama)
 - Internet connection (for initial setup and cloud fallback)
+
+**Windows users**: Run `.\install.ps1` in PowerShell (may require administrator privileges for some installations)
 
 ## ⚙️ Configuration
 

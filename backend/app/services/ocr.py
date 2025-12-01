@@ -10,11 +10,24 @@ try:
     
     # Try to find Tesseract in common locations if not in PATH
     import os
-    tesseract_paths = [
-        '/opt/homebrew/bin/tesseract',  # Apple Silicon Homebrew
-        '/usr/local/bin/tesseract',     # Intel Homebrew
-        '/usr/bin/tesseract',           # System default
-    ]
+    import platform
+    tesseract_paths = []
+    
+    if platform.system() == "Windows":
+        # Windows common locations
+        tesseract_paths = [
+            r'C:\Program Files\Tesseract-OCR\tesseract.exe',
+            r'C:\Program Files (x86)\Tesseract-OCR\tesseract.exe',
+            os.path.expanduser(r'~\AppData\Local\Programs\Tesseract-OCR\tesseract.exe'),
+        ]
+    else:
+        # macOS/Linux common locations
+        tesseract_paths = [
+            '/opt/homebrew/bin/tesseract',  # Apple Silicon Homebrew
+            '/usr/local/bin/tesseract',     # Intel Homebrew
+            '/usr/bin/tesseract',           # System default
+        ]
+    
     for path in tesseract_paths:
         if os.path.exists(path):
             pytesseract.pytesseract.tesseract_cmd = path

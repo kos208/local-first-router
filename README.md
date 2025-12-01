@@ -6,14 +6,20 @@
 
 ### One-Command Installation
 
+**macOS/Linux:**
 ```bash
 curl -fsSL https://raw.githubusercontent.com/YOUR_USERNAME/local-first-router/main/install.sh | bash
 ```
 
 Or download and run:
-
 ```bash
 ./install.sh
+```
+
+**Windows:**
+```powershell
+# Download the package, extract it, then:
+.\install.ps1
 ```
 
 This automatically installs:
@@ -25,16 +31,28 @@ This automatically installs:
 
 ### Start the Router
 
+**macOS/Linux:**
 ```bash
 ./start.sh
+```
+
+**Windows:**
+```powershell
+.\start.ps1
 ```
 
 Then open your browser to: **http://localhost:5173**
 
 ### Stop the Router
 
+**macOS/Linux:**
 ```bash
 ./stop.sh
+```
+
+**Windows:**
+```powershell
+.\stop.ps1
 ```
 
 ## ✨ Features
@@ -48,9 +66,11 @@ Then open your browser to: **http://localhost:5173**
 
 ## 📋 Requirements
 
-- macOS or Linux
+- **macOS, Linux, or Windows**: Full support with one-command installer
 - 8GB+ RAM (for Ollama)
 - Internet connection (for initial setup and cloud fallback)
+
+**Windows users**: Run `.\install.ps1` in PowerShell. The installer uses `winget` (Windows Package Manager) if available, otherwise it will guide you to install dependencies manually.
 
 ## ⚙️ Configuration
 
@@ -69,7 +89,9 @@ ENABLE_WEB_SEARCH=true
 
 ## 🎯 Usage
 
-1. **Start the router**: `./start.sh`
+1. **Start the router**: 
+   - macOS/Linux: `./start.sh`
+   - Windows: `.\start.ps1`
 2. **Open browser**: http://localhost:5173
 3. **Chat**: Ask questions, upload images, get answers
 4. **Web search**: Happens automatically for current information
@@ -85,8 +107,11 @@ ENABLE_WEB_SEARCH=true
 
 If you encounter issues:
 1. Check `TROUBLESHOOT.md`
-2. Ensure Ollama is running: `ollama serve`
+2. Ensure Ollama is running:
+   - macOS/Linux: `ollama serve`
+   - Windows: Ollama should start automatically, or run `ollama serve` manually
 3. Check backend logs for errors
+4. **Windows users**: See `WINDOWS_SUPPORT.md` for Windows-specific help
 
 ## 📝 License
 

@@ -43,9 +43,15 @@ else
 fi
 cp LICENSE "${PACKAGE_NAME}/" 2>/dev/null || true
 cp Makefile "${PACKAGE_NAME}/"
+# Unix scripts
 cp install-full.sh "${PACKAGE_NAME}/install.sh"
 cp start.sh "${PACKAGE_NAME}/"
 cp stop.sh "${PACKAGE_NAME}/"
+# Windows scripts
+cp install.ps1 "${PACKAGE_NAME}/" 2>/dev/null || true
+cp start.ps1 "${PACKAGE_NAME}/" 2>/dev/null || true
+cp stop.ps1 "${PACKAGE_NAME}/" 2>/dev/null || true
+cp WINDOWS_SUPPORT.md "${PACKAGE_NAME}/" 2>/dev/null || true
 cp QUICK_START.txt "${PACKAGE_NAME}/" 2>/dev/null || echo "QUICK_START.txt not found, will create one"
 
 # Backend
@@ -100,37 +106,45 @@ if [ ! -f "${PACKAGE_NAME}/QUICK_START.txt" ]; then
 
 Just run the installer - it will install everything automatically:
 
-  ./install.sh
+  macOS/Linux:
+    ./install.sh
+
+  Windows:
+    .\install.ps1
 
 This will:
   ✅ Install Python (if needed)
   ✅ Install Node.js (if needed)
   ✅ Install Ollama (if needed)
-  ✅ Download the llama3.2:latest model (if needed)
+  ✅ Download the llama3.1:8b-instruct-q4_K_M model (if needed)
   ✅ Install all application dependencies
   ✅ Build the frontend
 
 ## Start the Router
 
-  ./start.sh
+  macOS/Linux:
+    ./start.sh
+
+  Windows:
+    .\start.ps1
 
 Then open: http://localhost:5173
 
 ## Stop the Router
 
-  ./stop.sh
+  macOS/Linux:
+    ./stop.sh
 
-## Manual Start (Alternative)
-
-  make start
+  Windows:
+    .\stop.ps1
 
 ## Troubleshooting
 
-- If Ollama isn't running: ollama serve &
+- If Ollama isn't running: ollama serve (or start Ollama service on Windows)
 - To check models: ollama list
-- To pull model: ollama pull llama3.2:latest
+- To pull model: ollama pull llama3.1:8b-instruct-q4_K_M
 
-For more help, see README.md
+For more help, see README.md or WINDOWS_SUPPORT.md
 EOF
 fi
 
@@ -142,9 +156,13 @@ cat > "${PACKAGE_NAME}/START_HERE.txt" << 'EOF'
 ║                                                              ║
 ╚══════════════════════════════════════════════════════════════╝
 
-🚀 INSTALLATION (One Command):
+🚀 INSTALLATION:
 
-    ./install.sh
+    macOS/Linux:
+        ./install.sh
+
+    Windows:
+        .\install.ps1
 
     This will automatically install:
     • Python (if needed)
@@ -155,13 +173,21 @@ cat > "${PACKAGE_NAME}/START_HERE.txt" << 'EOF'
 
 🎬 START THE ROUTER:
 
-    ./start.sh
+    macOS/Linux:
+        ./start.sh
+
+    Windows:
+        .\start.ps1
 
     Then open: http://localhost:5173
 
 ⏹️  STOP:
 
-    ./stop.sh
+    macOS/Linux:
+        ./stop.sh
+
+    Windows:
+        .\stop.ps1
 
 📖 For detailed instructions, see QUICK_START.txt or README.md
 EOF
